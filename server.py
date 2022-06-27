@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
+app.secret_key = 'keep it secret, keep it safe' # set secret key for security
 
 @app.route('/')
 def index():
@@ -9,10 +10,18 @@ def index():
 @app.route('/users', methods=['POST'])
 def create_user():
     print("Got Post Info")
-    print(request.form)
+    # print(request.form)
     # Never render a template on a POST request.
     # Instead we will redirect to our index route.
-    return redirect('/')
+    session['name'] = request.form['name']
+    session['email'] = request.form['email']
+    return redirect('/show')
+
+@app.route('/show')
+def show_user():
+    # print('Showing the User Info From the form')
+    # print(request.form)
+    return render_template('show.html')
 
 # Error message for 404
 @app.errorhandler(404)
